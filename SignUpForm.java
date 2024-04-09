@@ -267,6 +267,26 @@ public class SignUpForm extends JFrame {
                 }
             }
         });
+
+        mobileField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                // Your code here (if needed)
+            }
+        
+            @Override
+            public void focusLost(FocusEvent e) {
+                String mobileNumber = mobileField.getText().trim();
+                if (!isValidMobileNumber(mobileNumber)) {
+                    JOptionPane.showMessageDialog(null, "Invalid Mobile Number", "Error", JOptionPane.ERROR_MESSAGE);
+                    mobileField.setText(""); // Clear the field
+                }
+            }
+            
+            private boolean isValidMobileNumber(String mobileNumber) {
+                return mobileNumber.matches("\\d{10}");
+            }
+        });
         
         dobField.addFocusListener(new FocusListener() {
             @Override
