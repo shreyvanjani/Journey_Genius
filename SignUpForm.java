@@ -21,8 +21,9 @@ public class SignUpForm extends JFrame {
     private JTextField dobField = new JTextField("YYYY/MM/DD");
     private JTextField cityField = new JTextField("City you live in");
     private JTextField email = new JTextField("Email Address");
-    private JPasswordField password = new JPasswordField("Enter your Password");
+    private JPasswordField password = new JPasswordField("Set Password");
     private JButton signUpButton = new JButton("Sign In");
+    private JButton resetButton = new JButton("Reset");
     private JLabel nameError = new JLabel();
     private JLabel usernameError = new JLabel();
     private JLabel passwordError = new JLabel();
@@ -55,7 +56,7 @@ public class SignUpForm extends JFrame {
         
             @Override
             public void focusLost(FocusEvent e) {
-                if (firstName.getText().isEmpty()) {
+                if (firstName.getText().isEmpty() && !firstNameFirstFocus) {
                     firstName.setText("Enter your First Name");
                     firstName.setForeground(Color.gray);
                 }
@@ -73,7 +74,7 @@ public class SignUpForm extends JFrame {
         
             @Override
             public void focusLost(FocusEvent e) {
-                if (lastName.getText().isEmpty()) {
+                if (lastName.getText().isEmpty() && !lastNameFirstFocus) {
                     lastName.setText("Enter your Last Name");
                     lastName.setForeground(Color.gray);
                 }
@@ -184,8 +185,8 @@ public class SignUpForm extends JFrame {
             public void focusLost(FocusEvent e) {
                 char[] passwordChars = password.getPassword();
                 if (passwordChars.length == 0) {
-                    password.setText("Enter your password");
-                    password.setForeground(Color.gray);
+                    password.setText("Set password");
+                    password.setForeground(Color.black);
                     password.setEchoChar((char) 0); // Show the text as it is
                 }
             }
@@ -244,7 +245,7 @@ public class SignUpForm extends JFrame {
         
             private void validatePasswordForBox(String passwordText) {
                 passwordText = passwordText.trim();
-                if (passwordText.length() > 0 && !passwordText.equals("Enter your password")) {
+                if (passwordText.length() > 0 && !passwordText.equals("Set password")) {
                     if (passwordText.length() < 8) {
                         passwordError.setForeground(Color.RED);
                         passwordError.setText("Password must be at least 8 characters long");
@@ -300,6 +301,7 @@ public class SignUpForm extends JFrame {
                         nameError.setForeground(Color.RED);
                         nameError.setText("Invalid date format");
                         JOptionPane.showMessageDialog(SignUpForm.this, "Please enter the date in the format YYYY/MM/DD", "Invalid Date", JOptionPane.WARNING_MESSAGE);
+                        dobField.setText("");
                     }
                 }
             }
@@ -418,6 +420,7 @@ public class SignUpForm extends JFrame {
                 }
         
                 if (isValid) {
+                    JOptionPane.showMessageDialog(SignUpForm.this, "Successfully Registered!!!", "Invalid Date", JOptionPane.INFORMATION_MESSAGE);
                     Welcome welcomeFrame = new Welcome();
                     welcomeFrame.setVisible(true);
                     dispose(); // Close the current SignUpForm
@@ -444,6 +447,32 @@ public class SignUpForm extends JFrame {
             }
         });
 
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                firstNameFirstFocus = true;
+                lastNameFirstFocus = true;
+                mobileFieldFirstFocus = true;
+                sexFieldFirstFocus = true;
+                dobFieldFirstFocus = true;
+                cityFieldFirstFocus = true;
+                emailFirstFocus = true;
+                passwordFirstFocus = true;
+                nameError.setText("");
+                passwordError.setText("");
+                usernameError.setText("");
+                firstName.setText("Enter your First Name");
+                lastName.setText("Enter your Last Name");
+                mobileField.setText("Mobile Number");
+                dobField.setText("YYYY/MM/DD");
+                sexField.setText("Male/ Female/ Others");
+                cityField.setText("City you live in");
+                email.setText("Email Address");
+                password.setText("Set Password");
+            }
+
+        });
+
         // Create the panel for the form
         JPanel panel = new JPanel() {
             BufferedImage image;
@@ -464,7 +493,6 @@ public class SignUpForm extends JFrame {
             }
         };
         panel.setLayout(new GridBagLayout());
-        // panel.setBackground(Color.BLACK);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -555,9 +583,16 @@ public class SignUpForm extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 9;
         gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        signUpButton.setPreferredSize(new Dimension(200, 40));
+        gbc.anchor = GridBagConstraints.WEST;
+        signUpButton.setPreferredSize(new Dimension(150, 40));
         panel.add(signUpButton, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 9;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        resetButton.setPreferredSize(new Dimension(150, 40));
+        panel.add(resetButton, gbc);
 
         // Add the error labels with white text
         gbc.gridx = 0;

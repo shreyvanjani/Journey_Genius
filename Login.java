@@ -17,6 +17,7 @@ public class Login extends JFrame {
     // private static Welcome welcome;
     private JFrame frame;
     private JButton loginButton;
+    private JButton resetButton;
     private JTextField email;
     private JPasswordField password;
     private JLabel usernameError;
@@ -29,6 +30,7 @@ public class Login extends JFrame {
         loginButton = new JButton("LOGIN");
         usernameError = new JLabel();
         passwordError = new JLabel();
+        resetButton = new JButton("Reset");
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 800);
@@ -169,6 +171,17 @@ public class Login extends JFrame {
                 }
             }
         });
+
+
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                email.setText("Your Email");
+                password.setText("Your Password");
+                passwordError.setText("");
+                usernameError.setText("");
+            }
+        });
         
         
         FocusListener emailFocusListener = new FocusListener() {
@@ -232,7 +245,6 @@ public class Login extends JFrame {
         JLabel loginLabel = new JLabel("Login Here for FREE!");
         		
 		Insets textInsets = new Insets(10, 10, 5, 10);
-		Insets buttonInsets = new Insets(20, 70, 10, 10);//Shift the button
 		Insets errorInsets = new Insets(0,20,0,0);
 		
 		GridBagConstraints input = new GridBagConstraints();
@@ -267,12 +279,19 @@ public class Login extends JFrame {
 		input.anchor = GridBagConstraints.WEST;
 		bottomPanel.add(passwordError,input);
 		
-		input.insets = buttonInsets;
+		input.insets = new Insets(20, 10, 10, 10);
 		input.anchor = GridBagConstraints.WEST;
 		input.gridx = 0;
 		input.gridy = 5;
 		bottomPanel.add(loginButton,input);
         loginButton.setPreferredSize(new Dimension(90, 35));
+
+        input.insets = new Insets(20, -100, 10, 10);
+		input.anchor = GridBagConstraints.WEST;
+		input.gridx = 1;
+		input.gridy = 5;
+		bottomPanel.add(resetButton,input);
+        resetButton.setPreferredSize(new Dimension(90, 35));
 
         // Add panels to the background panel
         backgroundPanel.add(topPanel);
