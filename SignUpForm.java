@@ -41,12 +41,6 @@ public class SignUpForm extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 800);
         setLocationRelativeTo(null);
-        // setBackground(Color.BLACK);
-
-        JLabel backgroundPanel = new JLabel(new ImageIcon(getClass().getResource("/images/signupbg.jpg")));
-
-        backgroundPanel.setLayout(new GridBagLayout());
-
         //Event Listeners
 
         //The Text Disappears on Clicking for all the TextBoxes
@@ -451,9 +445,27 @@ public class SignUpForm extends JFrame {
         });
 
         // Create the panel for the form
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel() {
+            BufferedImage image;
+            {
+                try {
+                    image = ImageIO.read(getClass().getResource("/images/signupbg.jpg"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (image != null) {
+                    g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
         panel.setLayout(new GridBagLayout());
-        panel.setBackground(Color.BLACK);
+        // panel.setBackground(Color.BLACK);
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.CENTER;
@@ -565,7 +577,6 @@ public class SignUpForm extends JFrame {
         panel.add(passwordError, gbc);
 
         // Add the panel to the frame
-        add(backgroundPanel, BorderLayout.CENTER);
         add(panel, BorderLayout.CENTER);
     }
 }
