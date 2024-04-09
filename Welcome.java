@@ -78,6 +78,20 @@ public class Welcome extends JFrame{
         signUpButton.setForeground(Color.WHITE);
         signUpButton.setPreferredSize(new Dimension(150, 40));
 
+        signUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                try{
+                    SignUpForm signUpFrame = new SignUpForm();
+                    signUpFrame.setVisible(true);
+                    frame.dispose();
+                } catch(IOException ex){
+                    ex.printStackTrace();
+                }
+            }
+        });
+
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

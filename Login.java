@@ -14,7 +14,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 public class Login extends JFrame {
-    private static Welcome welcome;
+    // private static Welcome welcome;
     private JFrame frame;
     private JButton loginButton;
     private JTextField email;
@@ -24,8 +24,8 @@ public class Login extends JFrame {
 
     public Login() throws IOException {
         frame = new JFrame("Login Form");
-        email = new JTextField();
-        password = new JPasswordField();
+        email = new JTextField("Enter Email");
+        password = new JPasswordField("Enter Password");
         loginButton = new JButton("LOGIN");
         usernameError = new JLabel();
         passwordError = new JLabel();
@@ -228,12 +228,23 @@ public class Login extends JFrame {
         // Add components to the second half
         JPanel bottomPanel = new JPanel(new GridBagLayout());
         bottomPanel.setBackground(Color.WHITE);
-		
+
+        JLabel loginLabel = new JLabel("Login Here for FREE!");
+        		
 		Insets textInsets = new Insets(10, 10, 5, 10);
 		Insets buttonInsets = new Insets(20, 70, 10, 10);//Shift the button
 		Insets errorInsets = new Insets(0,20,0,0);
 		
 		GridBagConstraints input = new GridBagConstraints();
+
+		Font font = new Font("Times New Roman", Font.BOLD, 16);
+        loginLabel.setFont(font);
+
+        input.anchor = GridBagConstraints.CENTER;
+        input.insets = textInsets;
+        input.gridy = 0; // Place the label at the top
+        bottomPanel.add(loginLabel, input);
+
 		input.anchor = GridBagConstraints.CENTER;
 		input.insets = textInsets;
 		input.gridy = 1;
