@@ -84,7 +84,7 @@ public class SwingSample{
 		passwordError = new JLabel();
 		
 		jframe.setContentPane(new JPanel() {
-			BufferedImage bufferedImage = ImageIO.read(this.getClass().getResource("/background.jpg"));
+			BufferedImage bufferedImage = ImageIO.read(this.getClass().getResource("/images/front_page.jpeg"));
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				g.drawImage(bufferedImage,0,0,this);
