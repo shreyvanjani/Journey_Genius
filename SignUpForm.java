@@ -488,6 +488,7 @@ public class SignUpForm extends JFrame {
                 } else if (!passwordText.matches(".*\\d+.*")) {
                     return false;
                 } else {
+                    
                     return true;
                 }
             }
