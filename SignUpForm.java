@@ -12,13 +12,16 @@ import java.awt.image.BufferedImage;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.SimpleDateFormat;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class SignUpForm extends JFrame {
     private JTextField firstName = new JTextField("Enter your First Name");
     private JTextField lastName = new JTextField("Enter your Last Name");
     private JTextField mobileField = new JTextField("Mobile Number");
     private JTextField sexField = new JTextField("Male/ Female/ Others");
-    private JTextField dobField = new JTextField("YYYY/MM/DD");
+    private JTextField dobField = new JTextField("YYYY-MM-DD");
     private JTextField cityField = new JTextField("City you live in");
     private JTextField email = new JTextField("Email Address");
     private JPasswordField password = new JPasswordField("Set Password");
@@ -35,16 +38,32 @@ public class SignUpForm extends JFrame {
     private boolean cityFieldFirstFocus = true;
     private boolean emailFirstFocus = true;
     private boolean passwordFirstFocus = true;
+    public String finalfirstNameString;
+    public String finallastNameString;
+    public String finalmobileFieldString;
+    public String finalsexString;
+    public String finaldobFString;
+    public String finalcityString;
+    public String finalemailString;
+    public String finalpasswordString;
 
-    public SignUpForm() throws IOException {
+    public SignUpForm() throws IOException, SQLException {
         // Set the frame properties
+
+        Connection con = ConnectionProvider.getConnection();
+        String q = "INSERT INTO User (First_Name, Last_Name, Sex, DOB, City, Password, Email_ID, Mobile_Number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement pstmt = con.prepareStatement(q);
+
         setTitle("Sign Up For Free");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 800);
         setLocationRelativeTo(null);
-        //Event Listeners
+        // Event Listeners
 
-        //The Text Disappears on Clicking for all the TextBoxes
+        // The Text Disappears on Clicking for all the TextBoxes
+        // focus listner is when you put cursor on text box
+        // focus listener verified
+
         firstName.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -53,12 +72,15 @@ public class SignUpForm extends JFrame {
                     firstNameFirstFocus = false;
                 }
             }
-        
+
             @Override
             public void focusLost(FocusEvent e) {
                 if (firstName.getText().isEmpty() && !firstNameFirstFocus) {
                     firstName.setText("Enter your First Name");
                     firstName.setForeground(Color.gray);
+                    firstNameFirstFocus = true;
+                } else {
+                    finalfirstNameString = firstName.getText();
                 }
             }
         });
@@ -71,12 +93,15 @@ public class SignUpForm extends JFrame {
                     lastNameFirstFocus = false;
                 }
             }
-        
+
             @Override
             public void focusLost(FocusEvent e) {
                 if (lastName.getText().isEmpty() && !lastNameFirstFocus) {
                     lastName.setText("Enter your Last Name");
                     lastName.setForeground(Color.gray);
+                    lastNameFirstFocus = true;
+                } else {
+                    finallastNameString = lastName.getText();
                 }
             }
         });
@@ -89,13 +114,26 @@ public class SignUpForm extends JFrame {
                     mobileFieldFirstFocus = false;
                 }
             }
-        
+
             @Override
             public void focusLost(FocusEvent e) {
+                String mobileNumber = mobileField.getText().trim();
                 if (mobileField.getText().isEmpty()) {
                     mobileField.setText("Mobile Number");
                     mobileField.setForeground(Color.gray);
+                    mobileFieldFirstFocus = true;
                 }
+
+                if (!isValidMobileNumber(mobileNumber)) {
+                    JOptionPane.showMessageDialog(null, "Invalid Mobile Number", "Error", JOptionPane.ERROR_MESSAGE);
+                    mobileField.setText("Mobile Number");
+                } else {
+                    finalmobileFieldString = mobileNumber;
+                }
+            }
+
+            private boolean isValidMobileNumber(String mobileNumber) {
+                return mobileNumber.matches("\\d{10}");
             }
         });
 
@@ -107,30 +145,53 @@ public class SignUpForm extends JFrame {
                     sexFieldFirstFocus = false;
                 }
             }
-        
+
             @Override
             public void focusLost(FocusEvent e) {
                 if (sexField.getText().isEmpty()) {
                     sexField.setText("Male/ Female/ Others");
                     sexField.setForeground(Color.gray);
+                    sexFieldFirstFocus = true;
                 }
             }
         });
 
         dobField.addFocusListener(new FocusListener() {
             @Override
+            public void focusLost(FocusEvent e) {
+                if (dobField.getText().isEmpty()) {
+                    dobField.setText("YYYY-MM-DD");
+                    dobField.setForeground(Color.gray);
+                    nameError.setText("");
+                    dobFieldFirstFocus = true;
+                } else {
+                    // Validate the date format
+                    try {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        dateFormat.setLenient(false);
+                        dateFormat.parse(dobField.getText());
+                        finaldobFString = dobField.getText();
+                        nameError.setText("");
+                    } catch (ParseException ex) {
+                        nameError.setForeground(Color.RED);
+                        nameError.setText("Invalid date format");
+                        JOptionPane.showMessageDialog(SignUpForm.this, "Please enter the date in the format YYYY-MM-DD",
+                                "Invalid Date", JOptionPane.WARNING_MESSAGE);
+                        dobField.setText("yyyy-MM-dd");
+                    }
+                }
+            }
+
+            @Override
             public void focusGained(FocusEvent e) {
                 if (dobFieldFirstFocus) {
                     dobField.setText("");
                     dobFieldFirstFocus = false;
                 }
-            }
-        
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (dobField.getText().isEmpty()) {
-                    dobField.setText("YYYY/MM/DD");
-                    dobField.setForeground(Color.gray);
+
+                if (dobField.getText().equals("(YYYY-MM-DD)")) {
+                    dobField.setText("");
+                    dobField.setForeground(Color.black);
                 }
             }
         });
@@ -141,14 +202,17 @@ public class SignUpForm extends JFrame {
                 if (cityFieldFirstFocus) {
                     cityField.setText("");
                     cityFieldFirstFocus = false;
+                } else {
+                    finalcityString = cityField.getText();
                 }
             }
-        
+
             @Override
             public void focusLost(FocusEvent e) {
                 if (cityField.getText().isEmpty()) {
                     cityField.setText("City you live in");
                     cityField.setForeground(Color.gray);
+                    cityFieldFirstFocus = true;
                 }
             }
         });
@@ -161,12 +225,13 @@ public class SignUpForm extends JFrame {
                     emailFirstFocus = false;
                 }
             }
-        
+
             @Override
             public void focusLost(FocusEvent e) {
                 if (email.getText().isEmpty()) {
                     email.setText("Email Address");
                     email.setForeground(Color.gray);
+                    emailFirstFocus = true;
                 }
             }
         });
@@ -180,7 +245,7 @@ public class SignUpForm extends JFrame {
                     passwordFirstFocus = false;
                 }
             }
-        
+
             @Override
             public void focusLost(FocusEvent e) {
                 char[] passwordChars = password.getPassword();
@@ -191,58 +256,96 @@ public class SignUpForm extends JFrame {
                 }
             }
         });
-        
-        email.getDocument().addDocumentListener(new DocumentListener() {        
+
+        // get document : takes text //
+        // complete it
+        // gives variable's data
+
+        sexField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                validateSex();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                validateSex();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                validateSex();
+            }
+
+            private void validateSex() {
+                String sexText = sexField.getText().trim();
+                if (!sexText.isEmpty() && !sexText.equals("Male/ Female/ Others")) {
+                    if (sexText.equalsIgnoreCase("Male") || sexText.equalsIgnoreCase("Female")
+                            || sexText.equalsIgnoreCase("Others")) {
+                        finalsexString = sexText;
+                        nameError.setText("");
+                    } else {
+                        nameError.setForeground(Color.RED);
+                        nameError.setText("Invalid Sex");
+                    }
+                } else {
+                    nameError.setText("");
+                }
+            }
+        });
+
+        email.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 validateEmail();
             }
-        
+
             @Override
             public void removeUpdate(DocumentEvent e) {
                 validateEmail();
             }
-        
+
             @Override
             public void changedUpdate(DocumentEvent e) {
                 validateEmail();
             }
-        
+
             private void validateEmail() {
                 String emailText = email.getText().trim();
                 if (emailText.length() > 0 && !emailText.equals("Email Address")) {
                     if (isValidEmail(emailText)) {
                         usernameError.setForeground(new Color(50, 168, 58));
                         usernameError.setText("Email is valid");
+                        finalemailString = emailText;
                     } else {
                         usernameError.setForeground(Color.RED);
                         usernameError.setText("Email is not valid");
                     }
                 }
             }
-        
+
             private boolean isValidEmail(String email) {
                 String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
                 return email.matches(emailRegex);
             }
         });
-        
-        password.getDocument().addDocumentListener(new DocumentListener() {        
+
+        password.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 validatePasswordForBox(String.valueOf(password.getPassword()));
             }
-        
+
             @Override
             public void removeUpdate(DocumentEvent e) {
                 validatePasswordForBox(String.valueOf(password.getPassword()));
             }
-        
+
             @Override
             public void changedUpdate(DocumentEvent e) {
                 validatePasswordForBox(String.valueOf(password.getPassword()));
             }
-        
+
             private void validatePasswordForBox(String passwordText) {
                 passwordText = passwordText.trim();
                 if (passwordText.length() > 0 && !passwordText.equals("Set password")) {
@@ -258,95 +361,13 @@ public class SignUpForm extends JFrame {
                     } else {
                         passwordError.setForeground(new Color(50, 168, 58));
                         passwordError.setText("Valid Password");
+                        finalpasswordString = passwordText;
                     }
                 }
             }
         });
 
-        mobileField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                // Your code here (if needed)
-            }
-        
-            @Override
-            public void focusLost(FocusEvent e) {
-                String mobileNumber = mobileField.getText().trim();
-                if (!isValidMobileNumber(mobileNumber)) {
-                    JOptionPane.showMessageDialog(null, "Invalid Mobile Number", "Error", JOptionPane.ERROR_MESSAGE);
-                    mobileField.setText(""); // Clear the field
-                }
-            }
-            
-            private boolean isValidMobileNumber(String mobileNumber) {
-                return mobileNumber.matches("\\d{10}");
-            }
-        });
-        
-        dobField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (dobField.getText().isEmpty()) {
-                    dobField.setText("YYYY/MM/DD");
-                    dobField.setForeground(Color.gray);
-                    nameError.setText("");
-                } else {
-                    // Validate the date format
-                    try {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                        dateFormat.setLenient(false);
-                        dateFormat.parse(dobField.getText());
-                        nameError.setText("");
-                    } catch (ParseException ex) {
-                        nameError.setForeground(Color.RED);
-                        nameError.setText("Invalid date format");
-                        JOptionPane.showMessageDialog(SignUpForm.this, "Please enter the date in the format YYYY/MM/DD", "Invalid Date", JOptionPane.WARNING_MESSAGE);
-                        dobField.setText("");
-                    }
-                }
-            }
-        
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (dobField.getText().equals("(YYYY/MM/DD)")) {
-                    dobField.setText("");
-                    dobField.setForeground(Color.black);
-                }
-            }
-        });
-
-        sexField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                validateSex();
-            }
-        
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                validateSex();
-            }
-        
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                validateSex();
-            }
-        
-            private void validateSex() {
-                String sexText = sexField.getText().trim();
-                if (!sexText.isEmpty() && !sexText.equals("Male/ Female/ Others")) {
-                    if (sexText.equalsIgnoreCase("Male") || sexText.equalsIgnoreCase("Female") || sexText.equalsIgnoreCase("Others")) {
-                        nameError.setText("");
-                    } else {
-                        nameError.setForeground(Color.RED);
-                        nameError.setText("Invalid Sex");
-                    }
-                } else {
-                    nameError.setText("");
-                }
-            }
-        });
-
-        //SignUp Button
+        // SignUp Button
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -358,40 +379,41 @@ public class SignUpForm extends JFrame {
                 String cityText = cityField.getText().trim();
                 String emailText = email.getText().trim();
                 String passwordText = String.valueOf(password.getPassword()).trim();
-        
+
                 boolean isValid = true;
-        
+
                 if (firstNameText.isEmpty() || firstNameText.equals("Enter your First Name")) {
                     nameError.setForeground(Color.RED);
                     nameError.setText("Please enter your first name");
                     isValid = false;
                 }
-        
+
                 if (lastNameText.isEmpty() || lastNameText.equals("Enter your Last Name")) {
                     nameError.setForeground(Color.RED);
                     nameError.setText("Please enter your last name");
                     isValid = false;
                 }
-        
+
                 if (mobileText.isEmpty() || mobileText.equals("Enter your Mobile Number")) {
                     nameError.setForeground(Color.RED);
                     nameError.setText("Please enter your mobile number");
                     isValid = false;
                 }
-        
-                if (!sexText.equalsIgnoreCase("Male") && !sexText.equalsIgnoreCase("Female") && !sexText.equalsIgnoreCase("Others")) {
+
+                if (!sexText.equalsIgnoreCase("Male") && !sexText.equalsIgnoreCase("Female")
+                        && !sexText.equalsIgnoreCase("Others")) {
                     nameError.setForeground(Color.RED);
                     nameError.setText("Invalid Sex");
                     isValid = false;
                 }
-        
-                if (dobText.isEmpty() || dobText.equals("Enter your Date of Birth (YYYY/MM/DD)")) {
+
+                if (dobText.isEmpty() || dobText.equals("Enter your Date of Birth (YYYY-MM-DD)")) {
                     nameError.setForeground(Color.RED);
                     nameError.setText("Please enter your date of birth");
                     isValid = false;
                 } else {
                     try {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         dateFormat.setLenient(false);
                         dateFormat.parse(dobText);
                     } catch (ParseException ex) {
@@ -400,40 +422,64 @@ public class SignUpForm extends JFrame {
                         isValid = false;
                     }
                 }
-        
+
                 if (cityText.isEmpty() || cityText.equals("Enter your City")) {
                     nameError.setForeground(Color.RED);
                     nameError.setText("Please enter your city");
                     isValid = false;
                 }
-        
+
                 if (!isValidEmail(emailText)) {
                     usernameError.setForeground(Color.RED);
                     usernameError.setText("Invalid email");
                     isValid = false;
                 }
-        
+
                 if (!validatePassword(passwordText)) {
                     passwordError.setForeground(Color.RED);
                     passwordError.setText("Invalid password");
                     isValid = false;
                 }
-        
+
                 if (isValid) {
-                    JOptionPane.showMessageDialog(SignUpForm.this, "Successfully Registered!!!", "Invalid Date", JOptionPane.INFORMATION_MESSAGE);
-                    Welcome welcomeFrame = new Welcome();
-                    welcomeFrame.setVisible(true);
-                    dispose(); // Close the current SignUpForm
+                    try {
+                        pstmt.setString(1, finalfirstNameString);
+                        pstmt.setString(2, finallastNameString);
+                        pstmt.setString(3, finalsexString);
+                        pstmt.setString(4, finaldobFString);
+                        pstmt.setString(5, finalcityString);
+                        pstmt.setString(6, finalpasswordString);
+                        pstmt.setString(7, finalemailString);
+                        pstmt.setString(8, finalmobileFieldString);
+
+                        // Execute the prepared statement
+                        int rowsAffected = pstmt.executeUpdate();
+                        if (rowsAffected > 0) {
+                            JOptionPane.showMessageDialog(SignUpForm.this, "Successfully Registered!!!", "Success",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                            Welcome welcomeFrame = new Welcome();
+                            welcomeFrame.setVisible(true);
+                            dispose(); // Close the current SignUpForm
+                        } else {
+                            JOptionPane.showMessageDialog(SignUpForm.this, "Failed to register. Please try again.",
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(SignUpForm.this, "Error: " + ex.getMessage(), "Database Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(SignUpForm.this, "Please check and correct the invalid fields", "Invalid Input", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(SignUpForm.this, "Please check and correct the invalid fields",
+                            "Invalid Input", JOptionPane.WARNING_MESSAGE);
                 }
             }
-        
+
             private boolean isValidEmail(String email) {
                 String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
                 return email.matches(emailRegex);
             }
-        
+
             private boolean validatePassword(String passwordText) {
                 if (passwordText.length() < 8) {
                     return false;
@@ -445,6 +491,7 @@ public class SignUpForm extends JFrame {
                     return true;
                 }
             }
+
         });
 
         resetButton.addActionListener(new ActionListener() {
@@ -464,11 +511,20 @@ public class SignUpForm extends JFrame {
                 firstName.setText("Enter your First Name");
                 lastName.setText("Enter your Last Name");
                 mobileField.setText("Mobile Number");
-                dobField.setText("YYYY/MM/DD");
+                dobField.setText("YYYY-MM-DD");
                 sexField.setText("Male/ Female/ Others");
                 cityField.setText("City you live in");
                 email.setText("Email Address");
                 password.setText("Set Password");
+
+                System.out.println("First Name: " + finalfirstNameString);
+                System.out.println("Last Name: " + finallastNameString);
+                System.out.println("Mobile: " + finalmobileFieldString);
+                System.out.println("Sex: " + finalsexString);
+                System.out.println("Date of Birth: " + finaldobFString);
+                System.out.println("City: " + finalcityString);
+                System.out.println("Email: " + finalemailString);
+                System.out.println("Password: " + finalpasswordString);
             }
 
         });
@@ -483,7 +539,7 @@ public class SignUpForm extends JFrame {
                     e.printStackTrace();
                 }
             }
-        
+
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);

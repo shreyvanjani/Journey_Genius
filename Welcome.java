@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
+import java.sql.SQLException;
 
 public class Welcome extends JFrame{
     public Welcome() {
@@ -88,6 +89,9 @@ public class Welcome extends JFrame{
                     frame.dispose();
                 } catch(IOException ex){
                     ex.printStackTrace();
+                } catch (SQLException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
                 }
             }
         });

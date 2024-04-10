@@ -22,6 +22,8 @@ public class Login extends JFrame {
     private JPasswordField password;
     private JLabel usernameError;
     private JLabel passwordError;
+    public String finalemailString;
+    public String finalpassString;
 
     public Login() throws IOException {
         frame = new JFrame("Login Form");
@@ -70,6 +72,7 @@ public class Login extends JFrame {
                 if (emailText.length() > 0 && !emailText.equals("Enter your email")) {
                     if (validateMail(emailText)) {
                         usernameError.setForeground(new Color(50, 168, 58));
+                        finalemailString = emailText;
                         usernameError.setText("Email is valid");
                     } else {
                         usernameError.setForeground(Color.RED);
@@ -115,6 +118,7 @@ public class Login extends JFrame {
                         return false;
                     } else {
                         passwordError.setForeground(new Color(50, 168, 58));
+                        finalpassString = passwordText;
                         passwordError.setText("Valid Password");
                         return true;
                     }
@@ -180,6 +184,9 @@ public class Login extends JFrame {
                 password.setText("Your Password");
                 passwordError.setText("");
                 usernameError.setText("");
+
+                System.out.println(finalemailString);
+                System.out.println(finalpassString);
             }
         });
         
@@ -243,13 +250,13 @@ public class Login extends JFrame {
         bottomPanel.setBackground(Color.WHITE);
 
         JLabel loginLabel = new JLabel("Login Here for FREE!");
-        		
-		Insets textInsets = new Insets(10, 10, 5, 10);
-		Insets errorInsets = new Insets(0,20,0,0);
-		
-		GridBagConstraints input = new GridBagConstraints();
+                
+        Insets textInsets = new Insets(10, 10, 5, 10);
+        Insets errorInsets = new Insets(0,20,0,0);
+        
+        GridBagConstraints input = new GridBagConstraints();
 
-		Font font = new Font("Times New Roman", Font.BOLD, 16);
+        Font font = new Font("Times New Roman", Font.BOLD, 16);
         loginLabel.setFont(font);
 
         input.anchor = GridBagConstraints.CENTER;
@@ -257,40 +264,40 @@ public class Login extends JFrame {
         input.gridy = 0; // Place the label at the top
         bottomPanel.add(loginLabel, input);
 
-		input.anchor = GridBagConstraints.CENTER;
-		input.insets = textInsets;
-		input.gridy = 1;
-		bottomPanel.add(email,input);
+        input.anchor = GridBagConstraints.CENTER;
+        input.insets = textInsets;
+        input.gridy = 1;
+        bottomPanel.add(email,input);
         email.setPreferredSize(new Dimension(230, 35));
-		
-		input.gridy = 2;
-		input.insets = errorInsets;
-		input.anchor = GridBagConstraints.WEST;
-		bottomPanel.add(usernameError,input);
-		
-		input.gridy = 3;
-		input.insets = textInsets;
-		input.anchor = GridBagConstraints.CENTER;
-		bottomPanel.add(password,input);
+        
+        input.gridy = 2;
+        input.insets = errorInsets;
+        input.anchor = GridBagConstraints.WEST;
+        bottomPanel.add(usernameError,input);
+        
+        input.gridy = 3;
+        input.insets = textInsets;
+        input.anchor = GridBagConstraints.CENTER;
+        bottomPanel.add(password,input);
         password.setPreferredSize(new Dimension(230, 35));
-		
-		input.gridy = 4;
-		input.insets = errorInsets;
-		input.anchor = GridBagConstraints.WEST;
-		bottomPanel.add(passwordError,input);
-		
-		input.insets = new Insets(20, 10, 10, 10);
-		input.anchor = GridBagConstraints.WEST;
-		input.gridx = 0;
-		input.gridy = 5;
-		bottomPanel.add(loginButton,input);
+        
+        input.gridy = 4;
+        input.insets = errorInsets;
+        input.anchor = GridBagConstraints.WEST;
+        bottomPanel.add(passwordError,input);
+        
+        input.insets = new Insets(20, 10, 10, 10);
+        input.anchor = GridBagConstraints.WEST;
+        input.gridx = 0;
+        input.gridy = 5;
+        bottomPanel.add(loginButton,input);
         loginButton.setPreferredSize(new Dimension(90, 35));
 
         input.insets = new Insets(20, -100, 10, 10);
-		input.anchor = GridBagConstraints.WEST;
-		input.gridx = 1;
-		input.gridy = 5;
-		bottomPanel.add(resetButton,input);
+        input.anchor = GridBagConstraints.WEST;
+        input.gridx = 1;
+        input.gridy = 5;
+        bottomPanel.add(resetButton,input);
         resetButton.setPreferredSize(new Dimension(90, 35));
 
         // Add panels to the background panel
